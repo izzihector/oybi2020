@@ -106,19 +106,16 @@ class CustomerBilling(models.Model):
     @api.onchange('partner_id')
     @api.depends('partner_id', 'invoice_ids')
     def onchange_partner_id(self):
-        current_inv_ids = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
-
-        for rec in current_inv_ids:
-            filterArray.append(('name','!=', rec.invoice_ids.name))
-
-
+        invArr = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
+        invArr = [invoice.invoice_ids.name for invoice in invArr]
         inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
                                             ('invoice_payment_state', '=', 'not_paid'),
                                             ('type', '=', 'out_invoice'),
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
                                             ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager),
-                                            filterArray])
+                                            ('name','not in', invArr)])
+
         self.invoice_ids = inv_ids.ids
 
     @api.model
