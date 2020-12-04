@@ -106,15 +106,22 @@ class CustomerBilling(models.Model):
     @api.onchange('partner_id')
     @api.depends('partner_id', 'invoice_ids')
     def onchange_partner_id(self):
-        existing_invoices = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
-        # invArr = [invoice.invoice_ids.name for invoice in invArr]
+
+        #Custom
+        #existing_invoices = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
+        #custom
+        context = dict(self._context or {})
+        active_id = context.get('active_id')
+        billing = self.env[context.get('active_model')].browse(active_id)
+        existing_invoices = [invoice.id for invoice in billing.invoice_ids.name]
+
         inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
                                             ('invoice_payment_state', '=', 'not_paid'),
                                             ('type', '=', 'out_invoice'),
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
-                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager)])
-                                            #('name','not in', existing_invoices.invoice_ids.name)])
+                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager) #custom
+                                            ('name','not in', existing_invoices)])
         # if inv_ids:
         #     for inv_id in inv_ids:
         #         if inv_id not in invArr:
