@@ -108,17 +108,20 @@ class CustomerBilling(models.Model):
     def onchange_partner_id(self):
 
         #Custom
-        billing = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
+        #billing = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
         #custom
-        existing_invoices = [invoice.id for invoice in billing.invoice_ids.name]
+        #existing_invoices = [invoice.id for invoice in billing.invoice_ids.name]
+        
+        #rec = self.env.cr.execute("SELECT ")
 
         inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
                                             ('invoice_payment_state', '=', 'not_paid'),
                                             ('type', '=', 'out_invoice'),
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
-                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager) #custom
-                                            ('name','not in', [existing_invoices])])
+                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager)]) #custom
+                                            #('name','not in', [existing_invoices])])
+
 
         self.invoice_ids = inv_ids.ids
 
