@@ -114,9 +114,11 @@ class CustomerBilling(models.Model):
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
                                             ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager),
-                                            ('name','not in', invArr)])
-
-        self.invoice_ids = inv_ids.ids
+                                            ('name','not in', invArr.id)])
+        if inv_ids:
+            for inv_id in inv_ids:
+                if inv_id not in invArr:
+                    self.invoice_ids = self.invoice_ids + inv_ids.ids
 
     @api.model
     def create(self, vals):
