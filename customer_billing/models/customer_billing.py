@@ -114,7 +114,7 @@ class CustomerBilling(models.Model):
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
                                             ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager),
-                                            ('name', 'not in', current_inv_ids.invoice_ids.name)])
+                                            ('name', 'not in', [current_inv_ids.invoice_ids.name])])
         self.invoice_ids = inv_ids.ids
 
     @api.model
