@@ -113,8 +113,8 @@ class CustomerBilling(models.Model):
                                             ('type', '=', 'out_invoice'),
                                             ('partner_id', '=', self.partner_id.id),
                                             ('company_id', '=', self.company_id.id),
-                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager),
-                                            ('name','not in', existing_invoices.invoice_ids.name)])
+                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager)])
+                                            #('name','not in', existing_invoices.invoice_ids.name)])
         # if inv_ids:
         #     for inv_id in inv_ids:
         #         if inv_id not in invArr:
