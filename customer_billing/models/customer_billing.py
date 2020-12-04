@@ -110,10 +110,11 @@ class CustomerBilling(models.Model):
         #Custom
         #existing_invoices = self.env['customer.billing'].search([('partner_id', '=', self.partner_id.id)])
         #custom
+        
         context = dict(self._context or {})
         active_id = context.get('active_id')
         billing = self.env[context.get('active_model')].browse(active_id)
-        existing_invoices = [invoice.id for invoice in billing.invoice_ids.name]
+        existing_invoices = [invoice.id for invoice in billing.invoice_ids]
 
         inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
                                             ('invoice_payment_state', '=', 'not_paid'),
