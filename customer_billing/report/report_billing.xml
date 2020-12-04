@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+        <report 
+            id="customer_billing_report"
+            model="customer.billing"
+            string="Customer Bill"
+            report_type="qweb-pdf"
+            name="customer_billing.report_billing"
+            file="customer_billing.report_billing"
+        />
+
+    </data>
+</odoo>

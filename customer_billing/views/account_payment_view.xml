@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_payment_form_customer_billing" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='partner_group']" position="attributes">
+                    <attribute name="invisible">context.get('active_model') in ['account.move', 'customer.billing']
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

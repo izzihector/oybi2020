@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_billing_document">
+            <t t-call="web.external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                <div class="page">
+                    <div class="row">
+                        <t t-set="address">
+                            <address t-field="o.partner_id"
+                                     t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                            <div t-if="o.partner_id.vat" class="mt16">
+                                <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label"
+                                   id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>:
+                                <span t-field="o.partner_id.vat"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <h2>
+                        <span t-if="o.state != 'draft'">
+                            <span t-field="o.name"/>
+                        </span>
+                        <span t-if="o.state == 'draft'">Draft Customer Bill</span>
+                    </h2>
+
+                    <div id="informations" class="row mt32 mb32">
+                        <div class="col-auto mw-100 mb-2" t-if="o.date_billing" name="invoice_date">
+                            <strong>Bill Date:</strong>
+                            <p class="m-0" t-field="o.date_billing"/>
+                        </div>
+                        <div class="col-auto mw-100 mb-2" t-if="o.partner_id.ref" name="customer_code">
+                            <strong>Customer Code:</strong>
+                            <p class="m-0" t-field="o.partner_id.ref"/>
+                        </div>
+                        <div class="col-auto mw-100 mb-2" t-if="o.name" name="reference">
+                            <strong>Reference:</strong>
+                            <p class="m-0" t-field="o.name"/>
+                        </div>
+                        <div name="desc" class="col-auto mw-100 mb-2" t-if="o.desc">
+                            <strong>Description:</strong>
+                            <p t-field="o.desc"/>
+                        </div>
+                    </div>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Invoice No.</th>
+                                <th>Invoice Date</th>
+                                <th>Due Date</th>
+                                <th class="text-right">Untaxed</th>
+                                <th class="text-right">Taxes</th>
+                                <th class="text-right">Total</th>
+                                <th class="text-right">Due</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bill_tbody">
+                            <tr t-foreach="o.invoice_ids" t-as="l">
+                                <td>
+                                    <span t-field="l.name"/>
+                                </td>
+                                <td t-if="l.invoice_date">
+                                    <span t-field="l.invoice_date"/>
+                                </td>
+                                <td t-else=""/>
+                                <td t-if="l.invoice_date_due">
+                                    <span t-field="l.invoice_date_due"/>
+                                </td>
+                                <td t-else=""/>
+                                <td class="text-right" t-if="l.amount_untaxed">
+                                    <span t-field="l.amount_untaxed"
+                                          t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                </td>
+                                <td t-else=""/>
+                                <td class="text-right" t-if="l.amount_tax">
+                                    <span t-field="l.amount_tax"
+                                          t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                </td>
+                                <td t-else=""/>
+                                <td class="text-right" t-if="l.amount_total">
+                                    <span t-field="l.amount_total"
+                                          t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                </td>
+                                <td t-else=""/>
+                                <td class="text-right">
+                                    <span t-field="l.amount_residual"
+                                          t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="clearfix">
+                        <div id="total" class="row">
+                            <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
+                                <table class="table table-sm;page-break-inside: avoid;">
+                                    <tr class="border-black o_subtotal" style="">
+                                        <td>
+                                            <strong>Untaxed Amount</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_untaxed"
+                                                  t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-black o_subtotal" style="">
+                                        <td>
+                                            <strong>Taxes</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_tax"
+                                                  t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-black o_subtotal" style="">
+                                        <td>
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_total"
+                                                  t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p t-if="o.comment">
+                        <strong>Comment:</strong>
+                        <span t-field="o.comment"/>
+                    </p>
+                </div>
+            </t>
+        </template>
+
+        <template id="customer_billing.report_billing">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="customer_billing.report_billing_document" t-lang="o.partner_id.lang"/>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>
