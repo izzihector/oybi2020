@@ -106,11 +106,17 @@ class CustomerBilling(models.Model):
     @api.onchange('partner_id')
     @api.depends('partner_id', 'invoice_ids')
     def onchange_partner_id(self):
+        # inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
+        #                                            ('invoice_payment_state', '=', 'not_paid'),
+        #                                            ('type', '=', 'out_invoice'),
+        #                                            ('partner_id', '=', self.partner_id.id),
+        #                                            ('company_id', '=', self.company_id.id)])
         inv_ids = self.env['account.move'].search([('state', '=', 'posted'),
-                                                   ('invoice_payment_state', '=', 'not_paid'),
-                                                   ('type', '=', 'out_invoice'),
-                                                   ('partner_id', '=', self.partner_id.id),
-                                                   ('company_id', '=', self.company_id.id)])
+                                            ('invoice_payment_state', '=', 'not_paid'),
+                                            ('type', '=', 'out_invoice'),
+                                            ('partner_id', '=', self.partner_id.id),
+                                            ('company_id', '=', self.company_id.id),
+                                            ('x_studio_eci_project_manager', '=', self.x_studio_eci_project_manager.id)])
         self.invoice_ids = inv_ids.ids
 
     @api.model
